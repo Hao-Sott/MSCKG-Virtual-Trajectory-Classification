@@ -1,0 +1,88 @@
+project:
+  seed: 5
+  jobs: 8
+paths:
+  trajectory: data/private/trajectory.csv
+  temporal_trajectory: data/private/trajectory_with_time.csv
+  tile_index: data/private/tile_index.csv
+  tile_image_root: data/private/tiles
+  color_templates: data/private/color_templates.csv
+  tiles: artifacts/tile_categories.csv
+  pois: data/private/pois.csv
+  tile_pixels: data/private/tile_pixel_counts.csv
+  tile_taxonomy: data/private/tile_taxonomy.csv
+  expert_annotations: data/private/tile_expert_annotations.xlsx
+  kg_full: artifacts/kg/full
+  kg_variants: artifacts/kg/variants
+  embeddings: artifacts/embeddings
+  features: artifacts/features
+  outputs: outputs
+columns:
+  group: gr
+  label: class
+  timestamp: restored_time
+  longitude: lon
+  latitude: lat
+  tile_entity: T_entity_id
+  poi_entities: P_entity_ids
+  tile_category: TC_entity_id
+  poi_categories: PC_entity_ids
+  tile_id: tile_id
+  tile_row: tile_row
+  tile_col: tile_col
+  tile_category_name: tile_category
+  poi_id: poi_id
+  poi_category_level1: pc1
+  poi_category_level2: pc2
+  expert_category: 英文类名
+  expert_1: 人工标注-专家1
+  expert_2: 人工标注-专家2
+  tile_image_path: path
+knowledge_graph:
+  tile_level: 18
+  poi_proximity_m: 50
+  embedding_dim: 100
+  epochs: 200
+  batch_size: 1024
+  negative_size: 256
+  learning_rate: 0.01
+  regularization: 0.000002
+  regularization_norm: 3
+  models: [TransE_L1, TransE_L2, TransR, ComplEx, RotatE, DistMult, RESCAL]
+classification:
+  test_size: 0.10
+  repeated_seeds: [0, 1, 2, 3, 4]
+  class_labels: [0, 2, 3, 4, 6, 12]
+  class_names: [food supervision, tourism, mechanical service, weather monitoring, hotel, sport]
+  feature_combinations: [PC, TC, P, T, T+P, TC+PC, P+TC, T+PC, T+P+TC, T+P+PC, T+TC+PC, P+TC+PC, T+P+TC+PC]
+  xgboost:
+    n_estimators: 400
+    max_depth: 6
+    learning_rate: 0.05
+    subsample: 0.8
+    colsample_bytree: 0.8
+    min_child_weight: 1
+    reg_lambda: 1.0
+    tree_method: hist
+baselines:
+  word2vec:
+    vector_size: 100
+    window: 5
+    min_count: 1
+    sg: 1
+    epochs: 10
+gru:
+  hidden_dim: 400
+  batch_size: 64
+  learning_rate: 0.0008
+  weight_decay: 0.0001
+  gradient_clip: 1.0
+  validation_fraction: 0.15
+  patience: 10
+  max_epochs: 200
+spatial:
+  block_quantiles: 5
+  regional_folds: 4
+  grid_size_degrees: 0.02
+  neighbour_radius_m: 150
+  ripley_radii_m: [100, 200, 300, 400, 500, 750, 1000]
